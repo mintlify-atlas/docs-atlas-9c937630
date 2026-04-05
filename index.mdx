@@ -1,97 +1,84 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Mapas Culturais"
+description: "Plataforma livre de mapeamento e gestão cultural. Reúna agentes, espaços, eventos e projetos — da inscrição à prestação de contas."
 ---
 
-## Setting up
+Mapas Culturais é uma plataforma de software livre para mapeamento colaborativo e gestão da cultura. Usada por municípios, estados e pelo governo federal brasileiro, ela conecta agentes culturais, espaços, eventos e projetos em um único ambiente — suportando a jornada completa do fomento cultural, do cadastro à prestação de contas.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Início Rápido" icon="rocket" href="/quickstart">
+    Suba uma instância local em minutos com Docker Compose
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Funcionalidades" icon="map" href="/features/agents">
+    Conheça agentes, espaços, eventos, projetos e oportunidades
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="API Reference" icon="code" href="/api/overview">
+    Consulte e integre dados culturais via API REST
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Deploy em Produção" icon="server" href="/deploy/docker">
+    Docker Compose ou Kubernetes com Helm chart
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## O que você pode fazer
 
-Everything you need to create world-class documentation.
+<CardGroup cols={3}>
+  <Card title="Mapear agentes" icon="user-group" href="/features/agents">
+    Cadastre indivíduos, coletivos e organizações culturais com geolocalização
+  </Card>
+  <Card title="Gerir espaços" icon="building" href="/features/spaces">
+    Catalogue teatros, museus, centros culturais e espaços alternativos
+  </Card>
+  <Card title="Divulgar eventos" icon="calendar" href="/features/events">
+    Programe e publique eventos com recorrência e georreferenciamento
+  </Card>
+  <Card title="Organizar projetos" icon="folder-open" href="/features/projects">
+    Agrupe iniciativas culturais com fases e participantes
+  </Card>
+  <Card title="Lançar oportunidades" icon="trophy" href="/features/opportunities">
+    Crie editais e chamadas com avaliação em múltiplas fases
+  </Card>
+  <Card title="Gerenciar inscrições" icon="clipboard-list" href="/features/registrations">
+    Receba, avalie e monitore inscrições com fluxo completo
+  </Card>
+</CardGroup>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+## Começando
 
-## Need inspiration?
+<Steps>
+  <Step title="Suba o ambiente local">
+    Clone o repositório e inicie os containers Docker:
+    ```bash
+    git clone https://github.com/redemapas/mapas.git
+    cd mapas
+    docker compose up -d
+    ```
+    A aplicação estará disponível em `http://localhost:8080`.
+  </Step>
+  <Step title="Explore a plataforma">
+    Acesse a interface web, crie seu perfil de agente e explore o mapa interativo com os dados culturais do seu território.
+  </Step>
+  <Step title="Integre via API">
+    Use a API REST para consultar e integrar dados culturais em outros sistemas:
+    ```bash
+    curl "http://localhost:8080/api/agent/find?@select=id,name&status=EQ(1)"
+    ```
+  </Step>
+  <Step title="Personalize a instalação">
+    Crie temas, módulos e hooks para adaptar a plataforma às necessidades da sua instalação.
+  </Step>
+</Steps>
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+## Instalações na rede
+
+Mapas Culturais está em produção em dezenas de instalações brasileiras e internacionais, incluindo:
+
+- **SNIIC** — Sistema Nacional de Informações e Indicadores Culturais (governo federal)
+- **Cultura Viva** — Programa federal de pontos de cultura
+- **Rede das Artes** — Plataforma do Ministério da Cultura
+- **IberculturaViva** — Rede ibero-americana de cultura viva comunitária
+- Estados como Ceará, Pernambuco, Pará, Goiás, Mato Grosso e mais de 20 outros
+
+<Note>
+  Mapas Culturais é software livre licenciado sob AGPL-3.0. Contribuições são bem-vindas via [GitHub](https://github.com/redemapas/mapas).
+</Note>

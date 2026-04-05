@@ -1,0 +1,98 @@
+---
+title: "Introdução ao Mapas Culturais"
+description: "Uma plataforma livre de mapeamento e gestão cultural usada por municípios, estados e o governo federal brasileiro."
+---
+
+Mapas Culturais is an open-source platform for cultural mapping and management. Used by hundreds of Brazilian municipalities, state governments, and federal institutions, it brings together cultural agents, spaces, events, and projects in a single collaborative environment — supporting the complete cultural funding journey from registration to final reporting.
+
+The platform is maintained by a community network of developers and public managers, and is pursuing recognition as **Software Público** by the Brazilian government and as a **Digital Public Good** by the United Nations.
+
+<CardGroup cols={2}>
+  <Card title="Início Rápido" icon="rocket" href="/quickstart">
+    Get a local instance running in minutes with Docker Compose.
+  </Card>
+  <Card title="Funcionalidades" icon="map" href="/features/agents">
+    Explore agents, spaces, events, projects, and opportunities.
+  </Card>
+  <Card title="Deploy em Produção" icon="server" href="/deploy/docker">
+    Deploy with Docker Compose or Kubernetes using the Helm chart.
+  </Card>
+  <Card title="Desenvolvimento" icon="code" href="/development/architecture">
+    Understand the architecture and start contributing.
+  </Card>
+</CardGroup>
+
+## What Mapas Culturais does
+
+Mapas Culturais provides a web environment for mapping, publishing, and managing cultural assets. Its core entities are:
+
+- **Agents** — individuals, collectives, and organizations with geolocation and profile data
+- **Spaces** — theaters, museums, cultural centers, and alternative venues
+- **Events** — scheduled activities with recurrence and geographic reference
+- **Projects** — grouped cultural initiatives with phases and participants
+- **Opportunities / Editais** — open calls with multi-phase evaluation workflows
+- **Registrations** — applications tied to opportunities, tracked through the full evaluation lifecycle
+
+Together these entities implement the **Jornada Completa do Fomento Cultural** (complete cultural funding journey): from an agent's first registration on the platform through submitting to an edital, evaluation, selection, monitoring, and final accounting.
+
+## Architecture overview
+
+Mapas Culturais is a server-side PHP web application backed by PostgreSQL with PostGIS for spatial data. The stack used in the RedeMapas reference installation is:
+
+| Layer | Technology |
+|---|---|
+| Language | PHP 8.3 with `declare(strict_types=1)` |
+| HTTP framework | Slim 4 |
+| ORM | Doctrine ORM with PHP 8 attributes (`#[ORM\Entity]`) |
+| Database | PostgreSQL 14 + PostGIS 3.4 |
+| Frontend build | pnpm workspaces (one workspace per theme/module) |
+| Cache / sessions | APCu, Redis (optional), or filesystem |
+| Containerization | Docker Compose (development), Helm chart (production) |
+
+### Directory layout
+
+```
+src/
+  core/       → MapasCulturais\  (base framework: App, Entity, Controller, Hooks)
+  modules/    → MapasCulturais\Modules\  (feature modules)
+  themes/     → MapasCulturais\Themes\  (installation themes)
+    RedeMapas/  → active theme for this installation
+config/       → base configuration (PHP arrays)
+dev/config.d/ → development overrides
+helm/mapas/   → Helm chart for Kubernetes
+tests/        → PHPUnit test suite
+```
+
+The application is accessed as a singleton via `MapasCulturais\App::i()`. Database migrations live in `src/db-updates.php` and are applied automatically on container start.
+
+## Branch structure
+
+The RedeMapas repository maintains two parallel development lines:
+
+| Branch | Synchronized with | Purpose |
+|---|---|---|
+| `main` | — | RedeMapas production branch |
+| `develop` | `mapasculturais/mapasculturais` | Community line — integrates open-source contributions |
+| `develop-minc` | `culturagovbr/mapasculturais` | MinC line — integrates Ministério da Cultura features |
+
+When contributing, identify which line your change belongs to and open a pull request against `develop` or `develop-minc`. Use the `-minc` suffix on branch names (e.g., `feat/something-minc`) for work on the MinC line.
+
+## Active installations
+
+Mapas Culturais is deployed across dozens of Brazilian and international installations:
+
+**Federal / International**
+
+- [SNIIC](https://mapa.cultura.gov.br/) — Sistema Nacional de Informações e Indicadores Culturais
+- [Cultura Viva](https://culturaviva.cultura.gov.br/) — federal program for cultural points
+- [Rede das Artes](https://rededasartes.cultura.gov.br/) — Ministério da Cultura platform
+- [IberculturaViva](https://mapa.iberculturaviva.org/) — Ibero-American community culture network
+- [Mapa Uruguai](https://culturaenlinea.uy/) — Uruguay's national cultural map
+
+**State installations (selection)**
+
+Amapá, Ceará, Espírito Santo, Goiás, Maranhão, Mato Grosso, Pará, Pernambuco, Paraíba, Piauí, Tocantins, and more than 20 others.
+
+## License
+
+Mapas Culturais is released under the [AGPL-3.0](https://www.gnu.org/licenses/agpl-3.0.html) license. Source code is available at [github.com/redemapas/mapas](https://github.com/redemapas/mapas). Contributions are welcome — see the [contributing guide](https://github.com/redemapas/mapas/blob/main/CONTRIBUTING.md) for details.

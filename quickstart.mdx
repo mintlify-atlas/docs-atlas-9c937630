@@ -1,80 +1,164 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Início Rápido"
+description: "Get a local Mapas Culturais instance running in minutes using Docker Compose."
 ---
 
-## Get started in three steps
+This guide walks you through cloning the RedeMapas repository and starting all services locally. The entire stack runs in Docker — no manual dependency installation required.
 
-Get your documentation site running locally and make your first customization.
+## Prerequisites
 
-### Step 1: Set up your local environment
+- [Docker](https://docs.docker.com/get-docker/) with Docker Compose v2 (`docker compose`, not `docker-compose`)
+- [Git](https://git-scm.com/)
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+## Starting the local environment
 
-### Step 2: Deploy your changes
+<Steps>
+  <Step title="Clone the repository">
+    ```bash
+    git clone https://github.com/redemapas/mapas.git
+    cd mapas
+    ```
+  </Step>
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+  <Step title="Start the containers">
+    ```bash
+    docker compose up -d
+    ```
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+    This starts three services: the PHP application, PostgreSQL with PostGIS, and MailPit for email capture. Database migrations run automatically on first boot via the container entrypoint.
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+    <Note>
+      The application container waits for PostgreSQL to pass its health check before starting. On the first run, pulling images and running migrations may take a minute or two.
+    </Note>
+  </Step>
 
-### Step 3: Go live
+  <Step title="Access the application">
+    Open [http://localhost:8080](http://localhost:8080) in your browser.
+  </Step>
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+  <Step title="Check your email (optional)">
+    MailPit captures all outbound email from the application. Open [http://localhost:8025](http://localhost:8025) to view captured messages — useful for testing registration flows, password resets, and notifications.
+  </Step>
+
+  <Step title="Connect to PostgreSQL (optional)">
+    The database is exposed on `localhost:5432`. Connect with any PostgreSQL client using the credentials below, or use the `dev/psql.sh` wrapper script.
+
+    | Parameter | Value |
+    |---|---|
+    | Host | `localhost` |
+    | Port | `5432` |
+    | Database | `mapas` |
+    | User | `mapas` |
+    | Password | `mapas-dev` |
+  </Step>
+</Steps>
+
+## Services at a glance
+
+| Service | URL | Description |
+|---|---|---|
+| Application | [http://localhost:8080](http://localhost:8080) | Main web interface |
+| MailPit | [http://localhost:8025](http://localhost:8025) | Email capture UI |
+| PostgreSQL | `localhost:5432` | Database (user: `mapas`, pass: `mapas-dev`) |
+
+## HTTPS with Caddy (optional)
+
+Some features — PWA installation, WebPush notifications — require HTTPS. The repository includes a `compose.override.yml` that adds a Caddy reverse proxy with a local TLS certificate.
+
+Docker Compose loads `compose.override.yml` automatically, so no extra flags are needed:
+
+```bash
+docker compose up -d
+```
+
+<Note>
+  If you previously started the stack without the override, run `docker compose down` first so Caddy's service is added cleanly.
+</Note>
+
+With the override active, two additional URLs become available:
+
+| Service | URL |
+|---|---|
+| Application (HTTPS) | [https://mapas.localhost:8443](https://mapas.localhost:8443) |
+| Application (HTTP redirect) | [http://mapas.localhost:8081](http://mapas.localhost:8081) |
+
+Caddy issues a self-signed CA certificate. To make your browser trust it, run:
+
+```bash
+docker compose exec caddy caddy trust
+```
+
+<Warning>
+  The `caddy trust` command modifies your operating system's trust store. On Linux you may need to follow additional steps for your specific browser — see the [Caddy documentation](https://caddyserver.com/docs/automatic-https#local-https) for details.
+</Warning>
+
+## Useful dev commands
+
+Several wrapper scripts in the `dev/` directory execute commands inside the running containers. Run them from the repository root:
+
+| Command | What it does |
+|---|---|
+| `dev/bash.sh` | Opens a shell inside the PHP application container |
+| `dev/psql.sh` | Connects to PostgreSQL interactively |
+| `dev/shell.sh` | Opens a PHP interactive shell (psysh) |
+| `dev/pnpm.sh <cmd>` | Runs a pnpm command inside the container |
+
+## Building frontend assets
+
+The frontend uses pnpm workspaces. Packages live under `src/modules/`, `src/plugins/`, and `src/themes/`. Use the `dev/pnpm.sh` wrapper to run pnpm commands inside the container without needing Node.js installed locally.
+
+```bash
+# Install dependencies
+dev/pnpm.sh -C src install
+
+# Build for production
+dev/pnpm.sh -C src run build
+
+# Watch mode for development
+dev/pnpm.sh -C src run watch
+```
+
+<Tip>
+  Use `run watch` during active frontend development — it rebuilds assets automatically on file changes and is significantly faster than a full build.
+</Tip>
+
+## Running tests
+
+Tests require a database connection and must run inside the application container. Each test wraps its operations in a database transaction that rolls back automatically in `tearDown`, so tests do not leave persistent state.
+
+<CodeGroup>
+
+```bash All tests
+docker compose exec mapas vendor/bin/phpunit tests/
+```
+
+```bash Single file
+docker compose exec mapas vendor/bin/phpunit tests/src/EntitiesTest.php
+```
+
+```bash Single method
+docker compose exec mapas vendor/bin/phpunit tests/src/EntitiesTest.php --filter testAgentCreation
+```
+
+</CodeGroup>
+
+<Note>
+  Test helpers live in `tests/src/Abstract/TestCase.php` (base class), `tests/src/Builders/` (entity builders), and `tests/src/Directors/` (test directors). Extend `Tests\Abstract\TestCase` for new test classes.
+</Note>
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
-
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Funcionalidades" icon="map" href="/features/agents">
+    Learn about agents, spaces, events, projects, and opportunities.
+  </Card>
+  <Card title="Arquitetura" icon="diagram-project" href="/development/architecture">
+    Understand the PHP framework, ORM, hooks system, and theme hierarchy.
+  </Card>
+  <Card title="Temas e módulos" icon="palette" href="/development/themes">
+    Customize the platform by creating themes and feature modules.
+  </Card>
+  <Card title="Deploy em produção" icon="server" href="/deploy/docker">
+    Deploy with Docker Compose or Kubernetes using the included Helm chart.
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

@@ -1,0 +1,112 @@
+{
+  "projectType": "saas",
+  "projectName": "Mapas Culturais",
+  "projectDescription": "Plataforma livre de mapeamento e gestão cultural que reúne agentes, espaços, eventos e projetos com suporte à jornada completa do fomento cultural.",
+  "theme": "almond",
+  "primaryColor": "#2d7a4f",
+  "lightColor": "#e8f5ee",
+  "darkColor": "#1a4d31",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentação",
+        "groups": [
+          {
+            "group": "Introdução",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Funcionalidades",
+            "pages": [
+              "features/agents",
+              "features/spaces",
+              "features/events",
+              "features/projects",
+              "features/opportunities",
+              "features/registrations"
+            ]
+          },
+          {
+            "group": "Instalação e Deploy",
+            "pages": [
+              "deploy/docker",
+              "deploy/kubernetes",
+              "deploy/configuration"
+            ]
+          },
+          {
+            "group": "Desenvolvimento",
+            "pages": [
+              "development/architecture",
+              "development/themes",
+              "development/modules",
+              "development/hooks",
+              "development/testing"
+            ]
+          },
+          {
+            "group": "Autenticação e Permissões",
+            "pages": [
+              "auth/providers",
+              "auth/permissions"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Visão Geral",
+            "pages": [
+              "api/overview",
+              "api/querying"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/agents",
+              "api/spaces",
+              "api/events",
+              "api/projects",
+              "api/opportunities",
+              "api/registrations"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Mapeamento colaborativo de agentes, espaços, eventos e projetos culturais",
+    "Gestão completa de oportunidades e editais com fases de avaliação",
+    "Sistema de inscrições com múltiplos métodos de avaliação (contínua, documental, técnica)",
+    "API REST completa para consultas e integração com filtros avançados",
+    "Suporte a subsites e multi-tenancy para múltiplas instalações",
+    "Autenticação via OpenID, Login Cidadão e Authentik",
+    "PWA com suporte a notificações WebPush",
+    "Sistema de hooks extensível para customização",
+    "Deploy via Docker Compose ou Helm/Kubernetes",
+    "Internacionalização (i18n) com suporte a múltiplos idiomas"
+  ],
+  "publicApiSurface": [
+    "GET /api/agent/find — busca de agentes com filtros",
+    "GET /api/space/find — busca de espaços com filtros",
+    "GET /api/event/find — busca de eventos com filtros",
+    "GET /api/project/find — busca de projetos com filtros",
+    "GET /api/opportunity/find — busca de oportunidades",
+    "GET /api/registration/find — busca de inscrições",
+    "POST /api/agent/create — criação de agente",
+    "POST /api/space/create — criação de espaço",
+    "POST /api/event/create — criação de evento",
+    "MapasCulturais\\App::i() — singleton da aplicação",
+    "$app->hook(string $event, callable $callback) — sistema de hooks",
+    "$app->repo(string $entityClass) — repositório Doctrine",
+    "Entity::canUser(string $action, ?User $user): bool — verificação de permissão",
+    "API::EQ(), API::LIKE(), API::ILIKE(), API::IN() — helpers de filtro da API"
+  ]
+}
